@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moncatec — Tu Servicio Técnico en L'Horta Nord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0a0a;color:#eee;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;height:auto;display:block}
+::selection{background:rgba(243,215,40,.25);color:#eee}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── Loading Screen ── */
+#loading-screen{position:fixed;inset:0;z-index:9999;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease;pointer-events:all}
+#loading-screen.hidden{opacity:0;pointer-events:none}
+#loading-screen .brand{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900;letter-spacing:-.04em;color:#f3d728;margin-bottom:40px;opacity:0;animation:fadeUp .8s .2s forwards}
+#loading-screen .bar-wrap{width:180px;height:2px;background:rgba(238,238,238,.08);border-radius:2px;overflow:hidden}
+#loading-screen .bar{height:100%;width:0%;background:#f3d728;border-radius:2px;transition:width .3s ease-out}
+#loading-screen .pct{color:rgba(238,238,238,.35);font-size:.65rem;letter-spacing:.25em;margin-top:12px;font-variant-numeric:tabular-nums}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(16px)}}
+
+/* ── Header ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(238,238,238,.04);transition:transform .35s}
+header .container{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:1.1rem;font-weight:800;letter-spacing:-.03em;color:#eee}
+.logo-mark{display:inline-block;width:20px;height:20px;border:2px solid #f3d728;border-radius:50%;margin-right:8px;vertical-align:middle;position:relative}
+.logo-mark::after{content:'';position:absolute;top:50%;left:50%;width:6px;height:6px;background:#f3d728;border-radius:50%;transform:translate(-50%,-50%)}
+.logo span{color:#f3d728}
+nav{display:flex;gap:28px}
+nav a{font-size:.7rem;font-weight:500;color:rgba(238,238,238,.45);transition:color .25s;text-transform:uppercase;letter-spacing:.12em;position:relative}
+nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1.5px;background:#f3d728;transition:width .35s;opacity:.4}
+nav a:hover{color:#eee}
+nav a:hover::after{width:100%;opacity:1}
+.menu-toggle{display:none;background:none;border:none;color:#eee;font-size:1.5rem;cursor:pointer;padding:4px}
+
+/* ── Canvas / Scrollytelling ── */
+#scroll-container{position:relative;height:400vh}
+#sticky-container{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;background:#0a0a0a}
+#animation-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* Edge fade */
+.edge-fade{position:absolute;inset:0;pointer-events:none;z-index:5}
+.edge-fade .left{position:absolute;inset-y:0;left:0;width:8%;background:linear-gradient(to right,#0a0a0a,transparent)}
+.edge-fade .right{position:absolute;inset-y:0;right:0;width:8%;background:linear-gradient(to left,#0a0a0a,transparent)}
+.edge-fade .top{position:absolute;inset-x:0;top:0;height:6%;background:linear-gradient(to bottom,#0a0a0a,transparent)}
+.edge-fade .bottom{position:absolute;inset-x:0;bottom:0;height:6%;background:linear-gradient(to top,#0a0a0a,transparent)}
+@media(min-width:768px){
+  .edge-fade .left,.edge-fade .right{width:6%}
+  .edge-fade .top,.edge-fade .bottom{height:4%}
+}
+
+/* Beats */
+.beat{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;pointer-events:none;z-index:10;padding:24px;will-change:opacity,transform}
+.beat-center{align-items:center;text-align:center}
+.beat-left{align-items:flex-start;text-align:left;padding-left:24px}
+.beat-right{align-items:flex-end;text-align:right;padding-right:24px}
+.beat h2{font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:12px}
+.beat p{color:rgba(243,215,40,.5);font-weight:300;max-width:520px;line-height:1.4}
+.beat-center p{margin-left:auto;margin-right:auto}
+.beat-title-xl{font-size:clamp(2.8rem,10vw,6rem);color:#f3d728}
+.beat-title-lg{font-size:clamp(1.8rem,5vw,3.5rem);color:#eee;font-weight:800}
+.beat-title-sm{font-size:clamp(1.4rem,4vw,2.8rem);color:#eee;font-weight:800}
+.beat-title-md{font-size:clamp(1.5rem,4.5vw,3rem);color:#eee}
+.beat-sub{font-size:clamp(.85rem,2vw,1.1rem)}
+.beat .cta-btn{pointer-events:auto;margin-top:24px;display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#f3d728;color:#0a0a0a;font-weight:700;font-size:.8rem;letter-spacing:.05em;border-radius:100px;transition:all .3s;border:none;cursor:pointer;text-transform:uppercase}
+.beat .cta-btn:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(243,215,40,.25)}
+.beat .cta-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none}
+
+/* Scroll Indicator */
+#scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;align-items:center;gap:8px;will-change:opacity}
+#scroll-indicator span{color:rgba(238,238,238,.25);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;font-weight:300}
+#scroll-indicator .arrow{width:18px;height:18px;color:rgba(243,215,40,.4);animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+#scroll-indicator .line{width:1px;height:28px;background:linear-gradient(to bottom,rgba(243,215,40,.3),transparent)}
+
+/* ── Section Shared ── */
+section{padding:100px 0;background:#0a0a0a}
+.section-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;color:#f3d728;margin-bottom:8px;display:block}
+.section-title{font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-.03em;margin-bottom:48px;line-height:1.15;color:#eee}
+.section-title em{font-style:normal;color:#f3d728;font-weight:400}
+
+/* ── Value Props ── */
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(238,238,238,.04);border-radius:20px;overflow:hidden}
+.value-card{background:rgba(80,73,56,.12);padding:40px 32px;transition:background .3s;position:relative}
+.value-card:hover{background:rgba(80,73,56,.22)}
+.value-card::before{content:'';position:absolute;top:0;left:20px;right:20px;height:2px;background:linear-gradient(90deg,transparent,rgba(243,215,40,.25),transparent);opacity:1;transition:opacity .3s}
+.value-icon{width:36px;height:36px;margin-bottom:18px;color:#f3d728}
+.value-card h3{font-size:.8rem;font-weight:700;margin-bottom:10px;letter-spacing:-.01em;color:#f3d728}
+.value-card p{font-size:.85rem;color:rgba(238,238,238,.5);line-height:1.75;font-weight:300}
+
+/* ── About ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about-text p{font-size:.9rem;color:rgba(238,238,238,.55);line-height:1.85;font-weight:300;margin-bottom:16px}
+.about-image{width:100%;aspect-ratio:1;background:rgba(238,238,238,.02);border-radius:20px;border:1px solid rgba(243,215,40,.1);display:flex;align-items:center;justify-content:center;color:rgba(238,238,238,.12);font-size:.8rem;overflow:hidden;position:relative;transition:border-color .3s}
+.about-image:hover{border-color:rgba(243,215,40,.35)}
+.about-image::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(243,215,40,.03),transparent 70%)}
+.about-image img{width:100%;height:100%;object-fit:cover}
+
+/* ── Services ── */
+.services-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:rgba(238,238,238,.04);border-radius:20px;overflow:hidden}
+.service-card{background:rgba(80,73,56,.12);padding:36px 24px;transition:background .3s;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.service-card:hover{background:rgba(80,73,56,.22)}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#f3d728,transparent);opacity:.2;transition:opacity .3s}
+.service-card:hover::before{opacity:1}
+.service-icon{width:44px;height:44px;margin-bottom:18px;color:#f3d728;transition:color .3s}
+.service-card h3{font-size:.7rem;font-weight:700;margin-bottom:10px;letter-spacing:-.01em;color:#eee;line-height:1.3;transition:color .3s}
+.service-card:hover h3{color:#f3d728}
+.service-card p{font-size:.78rem;color:rgba(238,238,238,.45);line-height:1.65;font-weight:300;max-width:200px}
+
+/* ── Brands ── */
+.brands-wrap{text-align:center}
+.brands-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:800px;margin:0 auto}
+.brand-pill{padding:8px 22px;background:rgba(238,238,238,.02);border:1px solid rgba(243,215,40,.12);border-radius:100px;font-size:.78rem;font-weight:450;color:rgba(238,238,238,.45);transition:all .3s;letter-spacing:.02em}
+.brand-pill:hover{border-color:rgba(243,215,40,.35);color:#f3d728;background:rgba(243,215,40,.04)}
+.brand-logos{display:flex;flex-wrap:wrap;gap:54px;justify-content:center;align-items:center;max-width:920px;margin:0 auto 44px}
+.brand-logo{display:flex;align-items:center;justify-content:center;opacity:.7;transition:opacity .3s,transform .3s}
+.brand-logo:hover{opacity:1;transform:translateY(-3px)}
+.brand-logo img{width:auto;object-fit:contain}
+@media(max-width:600px){.brand-logos{gap:34px}.brand-logo img{transform:scale(.78)}}
+
+/* ── Works gallery ── */
+.works-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 20px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(243,215,40,.3) transparent}
+.works-track::-webkit-scrollbar{height:6px}
+.works-track::-webkit-scrollbar-thumb{background:rgba(243,215,40,.3);border-radius:100px}
+.works-track::-webkit-scrollbar-track{background:transparent}
+.work-item{flex:0 0 auto;width:300px;aspect-ratio:4/3;border-radius:16px;overflow:hidden;scroll-snap-align:start;border:1px solid rgba(243,215,40,.1);background:rgba(10,10,10,.4);position:relative;transition:border-color .3s}
+.work-item:hover{border-color:rgba(243,215,40,.35)}
+.work-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.work-item:hover img{transform:scale(1.06)}
+@media(max-width:600px){.work-item{width:240px}}
+
+/* ── Logo image ── */
+.logo-link{display:flex;align-items:center}
+.logo-img{height:46px;width:auto;display:block}
+.footer-brand .logo-img{height:54px;margin-bottom:18px}
+@media(max-width:600px){.logo-img{height:36px}.footer-brand .logo-img{height:46px}}
+
+/* ── Brand banners (partners) ── */
+#partners{padding-top:90px}
+.banners-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.banners-track::-webkit-scrollbar{display:none}
+.banner-slide{flex:0 0 100%;scroll-snap-align:center;border-radius:20px;overflow:hidden;border:1px solid rgba(243,215,40,.12);background:#0a0a0a;aspect-ratio:3/1}
+.banner-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.banners-dots{display:flex;gap:9px;justify-content:center;margin-top:24px}
+.banners-dots button{width:9px;height:9px;border-radius:50%;border:none;background:rgba(238,238,238,.18);cursor:pointer;padding:0;transition:all .3s}
+.banners-dots button.active{background:#f3d728;width:26px;border-radius:5px}
+
+/* ── Instagram ── */
+.ig-placeholder{width:100%;padding:64px 24px;background:rgba(238,238,238,.02);border:1px dashed rgba(243,215,40,.15);border-radius:20px;text-align:center;color:rgba(238,238,238,.2);font-size:.85rem;font-weight:300}
+
+/* ── Footer ── */
+footer{background:rgba(10,10,10,.6);border-top:1px solid rgba(238,238,238,.04);padding:72px 0 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:56px}
+.footer-brand .logo{font-size:1.25rem;margin-bottom:12px}
+.footer-brand p{font-size:.85rem;color:rgba(238,238,238,.35);line-height:1.7;font-weight:300;max-width:320px}
+.footer-col h4{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(238,238,238,.35);margin-bottom:18px}
+.footer-col p,.footer-col a{font-size:.82rem;color:rgba(238,238,238,.35);line-height:2;font-weight:300;transition:color .2s;display:block}
+.footer-col p{color:rgba(243,215,40,.5)}
+.footer-col a:hover{color:#f3d728}
+.footer-social{display:flex;gap:8px;margin-top:16px}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:rgba(238,238,238,.02);border:1px solid rgba(238,238,238,.05);transition:all .25s;color:rgba(238,238,238,.3)}
+.footer-social a:hover{background:rgba(243,215,40,.06);border-color:rgba(243,215,40,.25);color:#f3d728}
+.footer-bottom{border-top:1px solid rgba(238,238,238,.03);padding-top:24px;text-align:center;font-size:.72rem;color:rgba(238,238,238,.18);font-weight:300;letter-spacing:.03em}
+
+/* ── Animations ── */
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ── Fluid Gold Canvas ── */
+#fluid-canvas{
+  position:fixed;top:0;left:0;
+  width:100vw;height:100vh;
+  pointer-events:none;
+  z-index:9000;
+  mix-blend-mode:screen;
+  opacity:0.55;
+}
+
+/* ── Cursor ── */
+@media(hover:hover){
+  *{cursor:none!important}
+  #cur-dot{
+    position:fixed;top:0;left:0;
+    width:6px;height:6px;
+    background:#f3d728;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:99999;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 8px rgba(243,215,40,1),0 0 16px rgba(243,215,40,.5);
+    transition:transform .12s,opacity .2s;
+    will-change:left,top;
+  }
+  #cur-dot.click{transform:translate(-50%,-50%) scale(2.5)}
+  #cur-dot.hide{opacity:0}
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:rgba(238,238,238,.15);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(243,215,40,.3)}
+html{scrollbar-width:thin;scrollbar-color:rgba(80,73,56,.4)#0a0a0a}
+
+/* ── Responsive ── */
+@media(max-width:1024px){
+  .services-grid{grid-template-columns:repeat(3,1fr)}
+  .services-grid .service-card:nth-child(4),.services-grid .service-card:nth-child(5){grid-column:span 1}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .beat-left{padding-left:20px}
+  .beat-right{padding-right:20px}
+}
+@media(max-width:768px){
+  header .container{height:56px}
+  .logo{font-size:1rem}
+  .menu-toggle{display:block}
+  nav{display:none;position:absolute;top:56px;left:0;right:0;background:rgba(10,10,10,.96);flex-direction:column;padding:20px 24px;gap:18px;border-bottom:1px solid rgba(238,238,238,.05)}
+  nav.open{display:flex}
+  section{padding:72px 0}
+  .values-grid{grid-template-columns:1fr;gap:1px;border-radius:16px}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .about-image{aspect-ratio:4/3}
+  .services-grid{grid-template-columns:1fr 1fr;border-radius:16px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .beat-left,.beat-right{padding:20px;align-items:center;text-align:center}
+  .beat-left p,.beat-right p{margin-left:auto;margin-right:auto}
+}
+@media(max-width:480px){
+  .services-grid{grid-template-columns:1fr}
+  .values-grid{grid-template-columns:1fr}
+  section{padding:56px 0}
+}
+
+/* ── Video bg: secciones transparentes ── */
+section {
+  background: transparent !important;
+}
+#hero {
+  background: transparent !important;
+}
+.values-grid,
+.services-grid {
+  background: rgba(10,10,10,0.55) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.value-card,
+.service-card {
+  background: rgba(10,10,10,0.45) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.value-card:hover,
+.service-card:hover {
+  background: rgba(20,18,10,0.65) !important;
+}
+.about-image {
+  background: rgba(10,10,10,0.4) !important;
+  backdrop-filter: blur(6px);
+}
+.ig-placeholder {
+  background: rgba(10,10,10,0.45) !important;
+  backdrop-filter: blur(8px);
+}
+footer {
+  background: rgba(10,10,10,0.75) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.video-guide-left,
+.video-guide-right {
+  display: none;
+}
+@media(min-width:768px) {
+  .video-guide-left,
+  .video-guide-right {
+    display: block;
+    position: fixed;
+    inset-block: 0;
+    width: 1px;
+    background: rgba(243,215,40,0.06);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .video-guide-left  { left: calc(50% - 600px); }
+  .video-guide-right { left: calc(50% + 600px); }
+}
+
+/* ── CTA Glass Card ── */
+.cta-glass-card {
+  background: rgba(10,10,10,0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(243,215,40,0.2);
+  border-radius: 28px;
+  padding: 72px 48px;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.cta-glass-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(180deg,
+    rgba(243,215,40,.4) 0%,
+    rgba(243,215,40,.06) 35%,
+    rgba(243,215,40,.06) 65%,
+    rgba(243,215,40,.4) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.cta-glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(243,215,40,0.07), transparent 70%);
+  pointer-events: none;
+}
+.cta-btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px; background: #f3d728; color: #0a0a0a;
+  font-weight: 700; font-size: .78rem; letter-spacing: .06em;
+  border-radius: 100px; text-transform: uppercase;
+  transition: transform .3s, box-shadow .3s;
+  text-decoration: none;
+}
+.cta-btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(243,215,40,.3);
+}
+.cta-btn-secondary {
+  display: inline-flex; align-items: center;
+  padding: 14px 32px;
+  border: 1px solid rgba(243,215,40,.22); color: rgba(238,238,238,.65);
+  font-weight: 500; font-size: .78rem; letter-spacing: .04em;
+  border-radius: 100px; transition: border-color .3s, color .3s;
+  text-decoration: none;
+}
+.cta-btn-secondary:hover {
+  border-color: #f3d728; color: #f3d728;
+}
+@media(max-width:600px) {
+  .cta-glass-card { padding: 48px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Video Background Global ═══ -->
+<div style="position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden">
+  <video autoplay loop muted playsinline
+    style="width:100%;height:100%;object-fit:cover;opacity:0.18;will-change:transform"
+    src="aura_gold.mp4"></video>
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,#0a0a0a 100%)"></div>
+</div>
+<div class="video-guide-left"></div>
+<div class="video-guide-right"></div>
+
+<!-- ═══ WebGL Fluid Gold Overlay ═══ -->
+<canvas id="fluid-canvas"></canvas>
+<div id="cur-dot"></div>
+
+<!-- ═══ Loading Screen ═══ -->
+<div id="loading-screen">
+  <div class="brand"><img src="logo-moncatec-trans.png" alt="Moncatec" style="height:74px;display:block"></div>
+  <div class="bar-wrap"><div class="bar" id="load-bar"></div></div>
+  <div class="pct" id="load-pct">0%</div>
+</div>
+
+<!-- ═══ Header ═══ -->
+<header>
+  <div class="container">
+    <a href="#hero" class="logo-link"><img src="logo-moncatec-trans.png" class="logo-img" alt="Moncatec — Porteros y Videoporteros"></a>
+    <nav id="nav">
+      <a href="#hero">Inicio</a>
+      <a href="#about">Nosotros</a>
+      <a href="#services">Servicios</a>
+      <a href="#works">Trabajos</a>
+      <a href="#contact">Contacto</a>
+    </nav>
+    <button class="menu-toggle" id="menu-btn">&#9776;</button>
+  </div>
+</header>
+
+<!-- ═══ Canvas Scrollytelling ═══ -->
+<section id="hero" style="padding:0">
+  <div id="scroll-container">
+    <div id="sticky-container">
+      <canvas id="animation-canvas"></canvas>
+
+      <!-- Edge fade overlays -->
+      <div class="edge-fade">
+        <div class="left"></div>
+        <div class="right"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+      </div>
+
+      <!-- Beat 1 — Brand (center) -->
+      <div class="beat beat-center" id="beat-0" style="opacity:0;transform:translateY(20px)">
+        <h2 class="beat-title-xl">MONCATEC</h2>
+        <p class="beat-sub">Protegemos tu hogar desde 2004.</p>
+      </div>
+
+      <!-- Beat 2 — Velocidad (left) -->
+      <div class="beat beat-left" id="beat-1" style="opacity:0;transform:translateY(20px)">
+        <h2 class="beat-title-lg">ASISTENCIA RÁPIDA</h2>
+        <p class="beat-sub">Respuesta urgente en 24h en toda L'Horta Nord.</p>
+      </div>
+
+      <!-- Beat 3 — Experiencia (right) -->
+      <div class="beat beat-right" id="beat-2" style="opacity:0;transform:translateY(20px)">
+        <h2 class="beat-title-lg">EXPERTOS EN SEGURIDAD</h2>
+        <p class="beat-sub">Instalamos y configuramos los mejores sistemas del mercado.</p>
+      </div>
+
+      <!-- Beat 4 — CTA (center) -->
+      <div class="beat beat-center" id="beat-3" style="opacity:0;transform:translateY(20px)">
+        <h2 class="beat-title-md" style="color:#eee;font-weight:800">SOLICITA TU PRESUPUESTO</h2>
+        <p class="beat-sub" style="margin-bottom:0">Te asesoramos sin ningún compromiso.</p>
+        <a class="cta-btn" href="mailto:info@moncatec.es">
+          PEDIR PRESUPUESTO
+          <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div id="scroll-indicator">
+        <span>Desplázate</span>
+        <div class="line"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Marcas partner (banners) ═══ -->
+<section id="partners">
+  <div class="container">
+    <span class="section-label">Tecnología de primer nivel</span>
+    <h2 class="section-title">Trabajamos con <em>las mejores marcas</em></h2>
+    <div class="banners-track fade-in" id="banners-track">
+      <div class="banner-slide"><img src="banner-ajax-dahua-camara.jpg" alt="Cámaras de videovigilancia AJAX y Dahua" loading="lazy"></div>
+      <div class="banner-slide"><img src="banner-fermax-duox.jpg" alt="Videoporteros Fermax DUOX plus" loading="lazy"></div>
+      <div class="banner-slide"><img src="banner-ajax-seguridad.jpg" alt="Sistemas de seguridad profesionales AJAX — El arte de proteger" loading="lazy"></div>
+    </div>
+    <div class="banners-dots" id="banners-dots"></div>
+  </div>
+</section>
+
+<!-- ═══ Value Props ═══ -->
+<section style="padding-top:100px">
+  <div class="container">
+    <span class="section-label">¿Por qué elegirnos?</span>
+    <h2 class="section-title">Nuestros <em>pilares</em></h2>
+    <div class="values-grid">
+      <div class="value-card fade-in">
+        <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <h3>CERCANÍA</h3>
+        <p>Ahorra costes en desplazamientos para tu reparación o sustitución de equipos por nuestra ubicación en L'Horta Nord.</p>
+      </div>
+      <div class="value-card fade-in">
+        <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        <h3>ESPECIALISTAS</h3>
+        <p>Formación continua para ofrecer los últimos sistemas del mercado con la máxima calidad.</p>
+      </div>
+      <div class="value-card fade-in">
+        <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <h3>COMPROMISO</h3>
+        <p>Máxima calidad en cada instalación y plena satisfacción de nuestros clientes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ About ═══ -->
+<section id="about">
+  <div class="container">
+    <span class="section-label">¿Quiénes somos?</span>
+    <h2 class="section-title">Sobre <em>nosotros</em></h2>
+    <div class="about-grid">
+      <div class="about-text fade-in">
+        <p>Moncatec, empresa de telecomunicaciones valenciana con más de 20 años de experiencia, dedicada a proporcionar soluciones de seguridad y comodidad para comunidades de vecinos, particulares y negocios.</p>
+        <p>Trabajamos con las mejores marcas del mercado para asegurar productos de la máxima calidad. Instalamos y configuramos cada sistema para que funcione perfectamente desde el primer día.</p>
+        <p>Nos comprometemos a ofrecer un servicio excepcional. Nuestros clientes son nuestra prioridad número uno. Más de dos décadas de experiencia nos avalan.</p>
+      </div>
+      <div class="about-image fade-in"><img src="fachada-oficina-moncatec.jpg" alt="Fachada de la oficina de Moncatec" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Services ═══ -->
+<section id="services">
+  <div class="container">
+    <span class="section-label">Soluciones integrales</span>
+    <h2 class="section-title">Servicios</h2>
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+        <h3>PORTEROS VIDEOPORTEROS</h3>
+        <p>Reparación y sustitución de porteros y videoporteros multimarca.</p>
+      </div>
+      <div class="service-card fade-in">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h3>CCTV – ALARMAS</h3>
+        <p>Instalación de sistemas de videovigilancia para hogares, comunidades y negocios.</p>
+      </div>
+      <div class="service-card fade-in">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h3>CONTROL DE ACCESOS</h3>
+        <p>Sistemas de acceso y presencia para comunidades y negocios.</p>
+      </div>
+      <div class="service-card fade-in">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 22c-1.798-1.998-2.518-3.995-2.807-5.993"/></svg>
+        <h3>ANTENAS</h3>
+        <p>Instalación y reparación de antenas TV, colectivas, TDT y parabólicas.</p>
+      </div>
+      <div class="service-card fade-in">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+        <h3>ILUMINACIÓN LED</h3>
+        <p>Estudio de iluminación LED profesional para interiores y exteriores.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Trabajos ═══ -->
+<section id="works">
+  <div class="container">
+    <span class="section-label">Nuestro trabajo</span>
+    <h2 class="section-title">Trabajos <em>realizados</em></h2>
+    <div class="works-track fade-in">
+      <div class="work-item"><img src="trabajo-videoportero-empotrado-puerta-madera.jpg" alt="Videoportero empotrado en puerta de madera" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-videoportero-comunitario-marmol.jpg" alt="Videoportero comunitario sobre mármol" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-videoportero-camara-ladrillo.jpg" alt="Videoportero con cámara sobre ladrillo" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-12-pulsadores-pared-ocre.jpg" alt="Portero de 12 pulsadores en pared ocre" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-8-pulsadores-pared-clara.jpg" alt="Portero de 8 pulsadores en pared clara" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-7-pulsadores-pared-amarilla.jpg" alt="Portero de 7 pulsadores en pared amarilla" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-5-pulsadores-ladrillo.jpg" alt="Portero de 5 pulsadores sobre ladrillo" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-4-pulsadores-ladrillo.jpg" alt="Portero de 4 pulsadores sobre ladrillo" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-portero-4-pulsadores-granito.jpg" alt="Portero de 4 pulsadores sobre granito" loading="lazy"></div>
+      <div class="work-item"><img src="trabajo-instalacion-aplique-led-exterior.jpg" alt="Instalación de aplique LED en exterior" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Brands ═══ -->
+<section>
+  <div class="container brands-wrap">
+    <span class="section-label">Confían en nosotros</span>
+    <h2 class="section-title">Marcas</h2>
+    <div class="brand-logos fade-in">
+      <div class="brand-logo"><img src="logo-marca-hikvision-w.png" alt="Hikvision" loading="lazy" style="height:28px"></div>
+      <div class="brand-logo"><img src="logo-marca-zkteco-w.png" alt="ZKTeco" loading="lazy" style="height:46px"></div>
+      <div class="brand-logo"><img src="logo-marca-televes-w.png" alt="Televés" loading="lazy" style="height:40px"></div>
+      <div class="brand-logo"><img src="logo-marca-tegui-w.png" alt="Tegui" loading="lazy" style="height:46px"></div>
+    </div>
+    <div class="brands-grid fade-in">
+      <span class="brand-pill">Fermax</span>
+      <span class="brand-pill">Navigator</span>
+      <span class="brand-pill">Satélite Rover</span>
+      <span class="brand-pill">Comelit</span>
+      <span class="brand-pill">Fagor</span>
+      <span class="brand-pill">Goldmar</span>
+      <span class="brand-pill">Alcad</span>
+      <span class="brand-pill">Auta</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Instagram ═══ -->
+<section>
+  <div class="container">
+    <span class="section-label">Síguenos</span>
+    <h2 class="section-title">Instagram</h2>
+    <div class="ig-placeholder fade-in">
+      Feed de Instagram @moncatec<br>
+      <span style="display:block;margin-top:8px;color:rgba(238,238,238,.1);font-size:.75rem">Widget Smash Balloon — se activa en WordPress</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA Final ═══ -->
+<section id="cta-final" style="padding:120px 0">
+  <div class="container" style="text-align:center">
+    <div class="cta-glass-card">
+      <span class="section-label">¿Listo para proteger tu hogar?</span>
+      <h2 style="font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-.04em;line-height:1.05;margin:16px 0 20px;color:#eee">
+        Solicita tu<br><span style="color:#f3d728">presupuesto gratuito</span>
+      </h2>
+      <p style="font-size:.9rem;color:rgba(238,238,238,.5);max-width:420px;margin:0 auto 36px;line-height:1.7;font-weight:300">
+        Más de 20 años protegiendo hogares, comunidades y negocios en L'Horta Nord. Sin compromiso.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="mailto:info@moncatec.es" class="cta-btn-primary">
+          PEDIR PRESUPUESTO
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+        </a>
+        <a href="tel:653336993" class="cta-btn-secondary">653 336 993</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Footer ═══ -->
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="logo-moncatec-trans.png" class="logo-img" alt="Moncatec">
+        <p>Más de 20 años proporcionando soluciones de seguridad y telecomunicaciones en L'Horta Nord.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <p>653 33 69 93 — Tono Pérez</p>
+        <a href="mailto:info@moncatec.es">info@moncatec.es</a>
+        <a href="mailto:tperez@moncatec.es">tperez@moncatec.es</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Política de Cookies</a>
+        <a href="#">Condiciones de Uso</a>
+        <a href="#">RGPD</a>
+        <div class="footer-social">
+          <a href="https://instagram.com/moncatec" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; Todos los derechos reservados para MONCATEC. Diseño de RBN Informática.</div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════ -->
+<!-- ═══  JAVASCRIPT — Canvas Scrollytelling ═══ -->
+<!-- ════════════════════════════════════════ -->
+<script>
+(function(){
+  'use strict';
+
+  // ── Config ──
+  var TOTAL = 122;
+  var PREFIX = 'sequence/frame_';
+  var EXT = '.jpg';
+  var BEATS = [
+    { start: 0.00, end: 0.20, el: document.getElementById('beat-0') },
+    { start: 0.25, end: 0.45, el: document.getElementById('beat-1') },
+    { start: 0.50, end: 0.70, el: document.getElementById('beat-2') },
+    { start: 0.75, end: 0.95, el: document.getElementById('beat-3') },
+  ];
+
+  // ── Refs ──
+  var canvas = document.getElementById('animation-canvas');
+  var ctx = canvas.getContext('2d');
+  var container = document.getElementById('scroll-container');
+  var sticky = document.getElementById('sticky-container');
+  var loadScreen = document.getElementById('loading-screen');
+  var loadBar = document.getElementById('load-bar');
+  var loadPct = document.getElementById('load-pct');
+  var scrollInd = document.getElementById('scroll-indicator');
+
+  var images = [];
+  var loadedCount = 0;
+  var currentFrame = -1;
+  var currentProgress = 0;
+  var targetProgress = 0;
+  var rafId = null;
+
+  // ── Preload ──
+  function preload(cb) {
+    var total = TOTAL;
+    for (var i = 0; i < total; i++) {
+      (function(idx){
+        var img = new Image();
+        img.onload = img.onerror = function(){
+          loadedCount++;
+          var pct = Math.round((loadedCount / total) * 100);
+          loadBar.style.width = pct + '%';
+          loadPct.textContent = pct + '%';
+          if (loadedCount >= total && cb) cb();
+        };
+        img.src = PREFIX + idx + EXT;
+        images[idx] = img;
+      })(i);
+    }
+  }
+
+  // ── Canvas Draw ──
+  function drawFrame(frameIndex) {
+    var img = images[frameIndex];
+    if (!img) return;
+
+    var dpr = window.devicePixelRatio || 1;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, w, h);
+
+    var imgA = img.naturalWidth / img.naturalHeight;
+    var viewA = w / h;
+    var dw, dh, dx, dy;
+
+    if (imgA > viewA) {
+      dw = w;
+      dh = w / imgA;
+      dx = 0;
+      dy = (h - dh) / 2;
+    } else {
+      dh = h;
+      dw = h * imgA;
+      dx = (w - dw) / 2;
+      dy = 0;
+    }
+
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
+  // ── Scroll Progress ──
+  function getProgress() {
+    var rect = container.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var total = container.offsetHeight - vh;
+    if (total <= 0) return 0;
+    var scrolled = -rect.top;
+    return Math.max(0, Math.min(1, scrolled / total));
+  }
+
+  // ── Beat Math ──
+  function beatOpacity(prog, start, end) {
+    var fi = start, fie = start + 0.1, fos = end - 0.1, fo = end;
+    if (prog < fi) return 0;
+    if (prog < fie) return (prog - fi) / 0.1;
+    if (prog < fos) return 1;
+    if (prog < fo) return 1 - (prog - fos) / 0.1;
+    return 0;
+  }
+
+  function beatY(prog, start, end) {
+    var fi = start, fie = start + 0.1, fos = end - 0.1, fo = end;
+    if (prog < fi) return 20;
+    if (prog < fie) return 20 * (1 - (prog - fi) / 0.1);
+    if (prog < fos) return 0;
+    if (prog < fo) return -20 * ((prog - fos) / 0.1);
+    return -20;
+  }
+
+  // ── Update Beats ──
+  function updateBeats(prog) {
+    for (var i = 0; i < BEATS.length; i++) {
+      var b = BEATS[i];
+      if (!b.el) continue;
+      var op = beatOpacity(prog, b.start, b.end);
+      var y = beatY(prog, b.start, b.end);
+      b.el.style.opacity = op;
+      b.el.style.transform = 'translateY(' + y + 'px)';
+    }
+  }
+
+  // ── Scroll Indicator ──
+  function updateIndicator(prog) {
+    var op = prog < 0.08 ? 1 - (prog / 0.08) : 0;
+    scrollInd.style.opacity = Math.max(0, op);
+  }
+
+  // ── RAF Loop ──
+  function tick() {
+    targetProgress = getProgress();
+    currentProgress += (targetProgress - currentProgress) * 0.06;
+    if (Math.abs(currentProgress - targetProgress) < 0.0001) {
+      currentProgress = targetProgress;
+    }
+
+    var frameIndex = Math.min(Math.floor(currentProgress * (TOTAL - 1)), TOTAL - 1);
+    if (frameIndex !== currentFrame && frameIndex >= 0) {
+      currentFrame = frameIndex;
+      drawFrame(frameIndex);
+    }
+
+    updateBeats(currentProgress);
+    updateIndicator(currentProgress);
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  // ── Resize ──
+  function onResize() {
+    if (currentFrame >= 0) drawFrame(currentFrame);
+  }
+
+  // ── Init ──
+  preload(function(){
+    // Draw first frame
+    drawFrame(0);
+    currentFrame = 0;
+    // Hide loading screen
+    setTimeout(function(){
+      loadScreen.classList.add('hidden');
+    }, 500);
+    // Start RAF
+    rafId = requestAnimationFrame(tick);
+  });
+
+  window.addEventListener('resize', onResize);
+
+  // ── Header hide/show ──
+  var lastScroll = 0;
+  var header = document.querySelector('header');
+  window.addEventListener('scroll', function(){
+    var sy = window.scrollY;
+    if (sy > lastScroll && sy > 100) {
+      header.style.transform = 'translateY(-100%)';
+    } else {
+      header.style.transform = 'translateY(0)';
+    }
+    lastScroll = sy;
+  }, { passive: true });
+
+  // ── Mobile nav ──
+  document.getElementById('menu-btn').addEventListener('click', function(){
+    document.getElementById('nav').classList.toggle('open');
+  });
+  document.querySelectorAll('nav a').forEach(function(a){
+    a.addEventListener('click', function(){
+      document.getElementById('nav').classList.remove('open');
+    });
+  });
+
+  // ── Fade-in observer ──
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.fade-in').forEach(function(el){
+    obs.observe(el);
+  });
+
+})();
+</script>
+<!-- ═══ Brand banners carousel (independent, does not touch canvas) ═══ -->
+<script>
+(function(){
+  var track = document.getElementById('banners-track');
+  if (!track) return;
+  var slides = track.children, dotsWrap = document.getElementById('banners-dots');
+  var n = slides.length, cur = 0, timer, st;
+  for (var i = 0; i < n; i++) {
+    (function(idx){
+      var b = document.createElement('button');
+      if (idx === 0) b.className = 'active';
+      b.setAttribute('aria-label', 'Banner ' + (idx + 1));
+      b.addEventListener('click', function(){ go(idx, true); });
+      dotsWrap.appendChild(b);
+    })(i);
+  }
+  var dots = dotsWrap.children;
+  function paint(idx){ for (var i = 0; i < n; i++) dots[i].className = (i === idx ? 'active' : ''); }
+  function go(idx, user){
+    cur = idx;
+    track.scrollTo({ left: slides[idx].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    paint(idx);
+    if (user) reset();
+  }
+  function next(){ go((cur + 1) % n); }
+  function reset(){ clearInterval(timer); timer = setInterval(next, 5000); }
+  track.addEventListener('scroll', function(){
+    clearTimeout(st);
+    st = setTimeout(function(){
+      var idx = Math.round(track.scrollLeft / track.clientWidth);
+      if (idx >= 0 && idx < n && idx !== cur) { cur = idx; paint(idx); }
+    }, 120);
+  }, { passive: true });
+  reset();
+})();
+</script>
+<!-- ═══ Gold Fluid Simulation ═══ -->
+<script>
+(function(){
+'use strict';
+
+/* ── Cursor dot ── */
+var curDot = document.getElementById('cur-dot');
+if(window.matchMedia('(hover:hover)').matches && curDot){
+  var cx=-200,cy=-200;
+  window.addEventListener('mousemove',function(e){
+    cx=e.clientX;cy=e.clientY;
+    curDot.style.left=cx+'px';
+    curDot.style.top=cy+'px';
+  },{passive:true});
+  document.addEventListener('mousedown',function(){curDot.classList.add('click')});
+  document.addEventListener('mouseup',function(){curDot.classList.remove('click')});
+  document.addEventListener('mouseleave',function(){curDot.classList.add('hide')});
+  document.addEventListener('mouseenter',function(){curDot.classList.remove('hide')});
+}
+
+/* ── WebGL Fluid ── */
+var canvas = document.getElementById('fluid-canvas');
+if(!canvas) return;
+
+var config = {
+  SIM_RESOLUTION:       128,
+  DYE_RESOLUTION:       1440,
+  DENSITY_DISSIPATION:  0.960,
+  VELOCITY_DISSIPATION: 0.985,
+  PRESSURE:             0.75,
+  PRESSURE_ITERATIONS:  20,
+  CURL:                 9,
+  SPLAT_RADIUS:         0.040,
+  SPLAT_FORCE:          3200,
+  SHADING:              true,
+  COLORFUL:             false,
+  COLOR_UPDATE_SPEED:   10,
+  PAUSED:               false,
+  BACK_COLOR:           {r:0,g:0,b:0},
+  TRANSPARENT:          true,
+  BLOOM:                true,
+  BLOOM_ITERATIONS:     8,
+  BLOOM_RESOLUTION:     256,
+  BLOOM_INTENSITY:      0.09,
+  BLOOM_THRESHOLD:      0.70,
+  BLOOM_SOFT_KNEE:      0.7,
+  SUNRAYS:              true,
+  SUNRAYS_RESOLUTION:   196,
+  SUNRAYS_WEIGHT:       0.25,
+};
+
+function pointerPrototype(){
+  this.id=-1; this.texcoordX=0; this.texcoordY=0;
+  this.prevTexcoordX=0; this.prevTexcoordY=0;
+  this.deltaX=0; this.deltaY=0;
+  this.down=false; this.moved=false;
+  this.color=[30,0,300];
+}
+var pointers=[]; var splatStack=[];
+pointers.push(new pointerPrototype());
+
+/* WebGL context */
+function getWebGLContext(canvas){
+  var params={alpha:true,depth:false,stencil:false,antialias:false,preserveDrawingBuffer:false};
+  var gl=canvas.getContext('webgl2',params); var isWebGL2=!!gl;
+  if(!isWebGL2) gl=canvas.getContext('webgl',params)||canvas.getContext('experimental-webgl',params);
+  var halfFloat,supportLinearFiltering;
+  if(isWebGL2){
+    gl.getExtension('EXT_color_buffer_float');
+    supportLinearFiltering=gl.getExtension('OES_texture_float_linear');
+  } else {
+    halfFloat=gl.getExtension('OES_texture_half_float');
+    supportLinearFiltering=gl.getExtension('OES_texture_half_float_linear');
+  }
+  gl.clearColor(0,0,0,1);
+  var halfFloatTexType=isWebGL2?gl.HALF_FLOAT:halfFloat.HALF_FLOAT_OES;
+  var formatRGBA,formatRG,formatR;
+  if(isWebGL2){
+    formatRGBA=getSupportedFormat(gl,gl.RGBA16F,gl.RGBA,halfFloatTexType);
+    formatRG  =getSupportedFormat(gl,gl.RG16F,  gl.RG,  halfFloatTexType);
+    formatR   =getSupportedFormat(gl,gl.R16F,   gl.RED, halfFloatTexType);
+  } else {
+    formatRGBA=getSupportedFormat(gl,gl.RGBA,gl.RGBA,halfFloatTexType);
+    formatRG  =getSupportedFormat(gl,gl.RGBA,gl.RGBA,halfFloatTexType);
+    formatR   =getSupportedFormat(gl,gl.RGBA,gl.RGBA,halfFloatTexType);
+  }
+  return{gl,ext:{formatRGBA,formatRG,formatR,halfFloatTexType,supportLinearFiltering}};
+}
+function getSupportedFormat(gl,internalFormat,format,type){
+  if(!supportRenderTextureFormat(gl,internalFormat,format,type)){
+    switch(internalFormat){
+      case gl.R16F:  return getSupportedFormat(gl,gl.RG16F,  gl.RG,  type);
+      case gl.RG16F: return getSupportedFormat(gl,gl.RGBA16F,gl.RGBA,type);
+      default:       return null;
+    }
+  }
+  return{internalFormat,format};
+}
+function supportRenderTextureFormat(gl,internalFormat,format,type){
+  var tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D,0,internalFormat,4,4,0,format,type,null);
+  var fbo=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  return gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE;
+}
+
+var _ctx=getWebGLContext(canvas); var gl=_ctx.gl; var ext=_ctx.ext;
+if(isMobile()) config.DYE_RESOLUTION=512;
+if(!ext.supportLinearFiltering){config.DYE_RESOLUTION=512;config.SHADING=false;config.BLOOM=false;config.SUNRAYS=false;}
+function isMobile(){return/Mobi|Android/i.test(navigator.userAgent);}
+
+/* Shader helpers */
+function Material(vertexShader,fragmentShaderSource){
+  this.vertexShader=vertexShader;
+  this.fragmentShaderSource=fragmentShaderSource;
+  this.programs=[];this.activeProgram=null;this.uniforms=[];
+}
+Material.prototype.setKeywords=function(keywords){
+  var hash=0;
+  for(var i=0;i<keywords.length;i++) hash+=hashCode(keywords[i]);
+  var program=this.programs[hash];
+  if(program==null){
+    var fragmentShader=compileShader(gl.FRAGMENT_SHADER,this.fragmentShaderSource,keywords);
+    program=createProgram(this.vertexShader,fragmentShader);
+    this.programs[hash]=program;
+  }
+  if(program===this.activeProgram) return;
+  this.uniforms=getUniforms(program); this.activeProgram=program;
+};
+Material.prototype.bind=function(){gl.useProgram(this.activeProgram);};
+function Program(vs,fs){this.uniforms={};this.program=createProgram(vs,fs);this.uniforms=getUniforms(this.program);}
+Program.prototype.bind=function(){gl.useProgram(this.program);};
+function createProgram(vs,fs){
+  var p=gl.createProgram();
+  gl.attachShader(p,vs);gl.attachShader(p,fs);gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+  return p;
+}
+function getUniforms(program){
+  var u=[],n=gl.getProgramParameter(program,gl.ACTIVE_UNIFORMS);
+  for(var i=0;i<n;i++){var name=gl.getActiveUniform(program,i).name;u[name]=gl.getUniformLocation(program,name);}
+  return u;
+}
+function compileShader(type,source,keywords){
+  source=addKeywords(source,keywords);
+  var s=gl.createShader(type);
+  gl.shaderSource(s,source);gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+function addKeywords(source,keywords){
+  if(!keywords) return source;
+  var s='';keywords.forEach(function(k){s+='#define '+k+'\n';});return s+source;
+}
+function hashCode(s){
+  if(!s.length) return 0;
+  var h=0;for(var i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h|=0;}return h;
+}
+
+/* Shaders */
+var baseVertexShader=compileShader(gl.VERTEX_SHADER,`
+  precision highp float;
+  attribute vec2 aPosition;
+  varying vec2 vUv,vL,vR,vT,vB;
+  uniform vec2 texelSize;
+  void main(){
+    vUv=aPosition*.5+.5;
+    vL=vUv-vec2(texelSize.x,0.);vR=vUv+vec2(texelSize.x,0.);
+    vT=vUv+vec2(0.,texelSize.y);vB=vUv-vec2(0.,texelSize.y);
+    gl_Position=vec4(aPosition,0.,1.);
+  }
+`);
+var blurVertexShader=compileShader(gl.VERTEX_SHADER,`
+  precision highp float;
+  attribute vec2 aPosition;
+  varying vec2 vUv,vL,vR;
+  uniform vec2 texelSize;
+  void main(){
+    vUv=aPosition*.5+.5;
+    float o=1.33333333;vL=vUv-texelSize*o;vR=vUv+texelSize*o;
+    gl_Position=vec4(aPosition,0.,1.);
+  }
+`);
+var blurShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying vec2 vUv,vL,vR;uniform sampler2D uTexture;
+  void main(){gl_FragColor=texture2D(uTexture,vUv)*.29411764+texture2D(uTexture,vL)*.35294117+texture2D(uTexture,vR)*.35294117;}
+`);
+var copyShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv;uniform sampler2D uTexture;
+  void main(){gl_FragColor=texture2D(uTexture,vUv);}
+`);
+var clearShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv;uniform sampler2D uTexture;uniform float value;
+  void main(){gl_FragColor=value*texture2D(uTexture,vUv);}
+`);
+var colorShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;uniform vec4 color;
+  void main(){gl_FragColor=color;}
+`);
+var displayShaderSource=`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv,vL,vR,vT,vB;
+  uniform sampler2D uTexture,uVelocity,uBloom,uSunrays,uDithering;
+  uniform vec2 ditherScale,texelSize;
+  vec3 linearToGamma(vec3 c){c=max(c,vec3(0));return max(1.055*pow(c,vec3(.4166667))-.055,vec3(0));}
+  void main(){
+    vec2 vel=texture2D(uVelocity,vUv).xy;
+    vel+=texture2D(uVelocity,vUv+vec2(texelSize.x,0.)).xy;
+    vel+=texture2D(uVelocity,vUv+vec2(-texelSize.x,0.)).xy;
+    vel+=texture2D(uVelocity,vUv+vec2(0.,texelSize.y)).xy;
+    vel+=texture2D(uVelocity,vUv+vec2(0.,-texelSize.y)).xy;
+    vel/=5.;
+    vec3 c;
+    c.r=texture2D(uTexture,vUv+vel*.00045).r;
+    c.g=texture2D(uTexture,vUv+vel*.00033).g;
+    c.b=texture2D(uTexture,vUv+vel*.00022).b;
+    #ifdef SHADING
+      vec3 lc=texture2D(uTexture,vL).rgb,rc=texture2D(uTexture,vR).rgb;
+      vec3 tc=texture2D(uTexture,vT).rgb,bc=texture2D(uTexture,vB).rgb;
+      float dx=length(rc)-length(lc),dy=length(tc)-length(bc);
+      vec3 n=normalize(vec3(dx,dy,length(texelSize)));
+      float diffuse=clamp(dot(n,vec3(0,0,1))+.7,.7,1.);
+      c*=diffuse;
+    #endif
+    #ifdef BLOOM
+      vec3 bloom=texture2D(uBloom,vUv).rgb;
+    #endif
+    #ifdef SUNRAYS
+      float sunrays=texture2D(uSunrays,vUv).r;
+      c*=sunrays;
+      #ifdef BLOOM
+        bloom*=sunrays;
+      #endif
+    #endif
+    #ifdef BLOOM
+      float noise=texture2D(uDithering,vUv*ditherScale).r;
+      noise=noise*2.-1.;
+      bloom+=noise/255.;
+      bloom=linearToGamma(bloom);
+      c+=bloom;
+    #endif
+    float a=max(c.r,max(c.g,c.b));
+    gl_FragColor=vec4(c,a);
+  }
+`;
+var bloomPrefilterShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying vec2 vUv;uniform sampler2D uTexture;uniform vec3 curve;uniform float threshold;
+  void main(){
+    vec3 c=texture2D(uTexture,vUv).rgb;
+    float br=max(c.r,max(c.g,c.b));
+    float rq=clamp(br-curve.x,0.,curve.y);rq=curve.z*rq*rq;
+    c*=max(rq,br-threshold)/max(br,.0001);
+    gl_FragColor=vec4(c,0.);
+  }
+`);
+var bloomBlurShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying vec2 vL,vR,vT,vB;uniform sampler2D uTexture;
+  void main(){gl_FragColor=(texture2D(uTexture,vL)+texture2D(uTexture,vR)+texture2D(uTexture,vT)+texture2D(uTexture,vB))*.25;}
+`);
+var bloomFinalShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying vec2 vL,vR,vT,vB;uniform sampler2D uTexture;uniform float intensity;
+  void main(){gl_FragColor=(texture2D(uTexture,vL)+texture2D(uTexture,vR)+texture2D(uTexture,vT)+texture2D(uTexture,vB))*.25*intensity;}
+`);
+var sunraysMaskShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv;uniform sampler2D uTexture;
+  void main(){vec4 c=texture2D(uTexture,vUv);float br=max(c.r,max(c.g,c.b));c.a=1.-min(max(br*20.,0.),.8);gl_FragColor=c;}
+`);
+var sunraysShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv;uniform sampler2D uTexture;uniform float weight;
+  #define ITERATIONS 16
+  void main(){
+    float Density=.3,Decay=.95,Exposure=.7;
+    vec2 coord=vUv,dir=(vUv-.5)*(1./float(ITERATIONS)*Density);
+    float ill=1.,color=texture2D(uTexture,vUv).a;
+    for(int i=0;i<ITERATIONS;i++){coord-=dir;color+=texture2D(uTexture,coord).a*ill*weight;ill*=Decay;}
+    gl_FragColor=vec4(color*Exposure,0.,0.,1.);
+  }
+`);
+var splatShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv;uniform sampler2D uTarget;
+  uniform float aspectRatio;uniform vec3 color;uniform vec2 point;uniform float radius;
+  void main(){
+    vec2 p=vUv-point.xy;p.x*=aspectRatio;
+    vec3 splat=exp(-dot(p,p)/radius)*color;
+    gl_FragColor=vec4(texture2D(uTarget,vUv).xyz+splat,1.);
+  }
+`);
+var advectionShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv;uniform sampler2D uVelocity,uSource;
+  uniform vec2 texelSize,dyeTexelSize;uniform float dt,dissipation;
+  vec4 bilerp(sampler2D s,vec2 uv,vec2 ts){
+    vec2 st=uv/ts-.5,iuv=floor(st),fuv=fract(st);
+    vec4 a=texture2D(s,(iuv+vec2(.5,.5))*ts),b=texture2D(s,(iuv+vec2(1.5,.5))*ts);
+    vec4 c=texture2D(s,(iuv+vec2(.5,1.5))*ts),d=texture2D(s,(iuv+vec2(1.5,1.5))*ts);
+    return mix(mix(a,b,fuv.x),mix(c,d,fuv.x),fuv.y);
+  }
+  void main(){
+    #ifdef MANUAL_FILTERING
+      vec2 coord=vUv-dt*bilerp(uVelocity,vUv,texelSize).xy*texelSize;
+      vec4 result=bilerp(uSource,coord,dyeTexelSize);
+    #else
+      vec2 coord=vUv-dt*texture2D(uVelocity,vUv).xy*texelSize;
+      vec4 result=texture2D(uSource,coord);
+    #endif
+    gl_FragColor=result/(1.+dissipation*dt);
+  }`,
+  ext.supportLinearFiltering?null:['MANUAL_FILTERING']
+);
+var divergenceShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uVelocity;
+  void main(){
+    float L=texture2D(uVelocity,vL).x,R=texture2D(uVelocity,vR).x;
+    float T=texture2D(uVelocity,vT).y,B=texture2D(uVelocity,vB).y;
+    vec2 C=texture2D(uVelocity,vUv).xy;
+    if(vL.x<0.)L=-C.x;if(vR.x>1.)R=-C.x;if(vT.y>1.)T=-C.y;if(vB.y<0.)B=-C.y;
+    gl_FragColor=vec4(.5*(R-L+T-B),0.,0.,1.);
+  }
+`);
+var curlShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uVelocity;
+  void main(){
+    float L=texture2D(uVelocity,vL).y,R=texture2D(uVelocity,vR).y;
+    float T=texture2D(uVelocity,vT).x,B=texture2D(uVelocity,vB).x;
+    gl_FragColor=vec4(.5*(R-L-T+B),0.,0.,1.);
+  }
+`);
+var vorticityShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision highp float;precision highp sampler2D;
+  varying vec2 vUv,vL,vR,vT,vB;
+  uniform sampler2D uVelocity,uCurl;uniform float curl,dt;
+  void main(){
+    float L=texture2D(uCurl,vL).x,R=texture2D(uCurl,vR).x;
+    float T=texture2D(uCurl,vT).x,B=texture2D(uCurl,vB).x,C=texture2D(uCurl,vUv).x;
+    vec2 force=.5*vec2(abs(T)-abs(B),abs(R)-abs(L));
+    force/=length(force)+.0001;force*=curl*C;force.y*=-1.;
+    vec2 velocity=texture2D(uVelocity,vUv).xy+force*dt;
+    velocity=min(max(velocity,-1000.),1000.);
+    gl_FragColor=vec4(velocity,0.,1.);
+  }
+`);
+var pressureShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uPressure,uDivergence;
+  void main(){
+    float L=texture2D(uPressure,vL).x,R=texture2D(uPressure,vR).x;
+    float T=texture2D(uPressure,vT).x,B=texture2D(uPressure,vB).x;
+    float divergence=texture2D(uDivergence,vUv).x;
+    gl_FragColor=vec4((L+R+B+T-divergence)*.25,0.,0.,1.);
+  }
+`);
+var gradientSubtractShader=compileShader(gl.FRAGMENT_SHADER,`
+  precision mediump float;precision mediump sampler2D;
+  varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uPressure,uVelocity;
+  void main(){
+    float L=texture2D(uPressure,vL).x,R=texture2D(uPressure,vR).x;
+    float T=texture2D(uPressure,vT).x,B=texture2D(uPressure,vB).x;
+    vec2 velocity=texture2D(uVelocity,vUv).xy;
+    velocity.xy-=vec2(R-L,T-B);
+    gl_FragColor=vec4(velocity,0.,1.);
+  }
+`);
+
+/* Blit */
+var blit=(function(){
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,-1,1,1,1,1,-1]),gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,gl.createBuffer());
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3]),gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(0);
+  return function(target,clear){
+    if(target==null){gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
+    else{gl.viewport(0,0,target.width,target.height);gl.bindFramebuffer(gl.FRAMEBUFFER,target.fbo);}
+    if(clear){gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);}
+    gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+  };
+})();
+
+/* FBO helpers */
+function createFBO(w,h,internalFormat,format,type,param){
+  gl.activeTexture(gl.TEXTURE0);
+  var tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,param);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,param);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D,0,internalFormat,w,h,0,format,type,null);
+  var fbo=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  gl.viewport(0,0,w,h);gl.clear(gl.COLOR_BUFFER_BIT);
+  return{texture:tex,fbo:fbo,width:w,height:h,texelSizeX:1./w,texelSizeY:1./h,
+    attach:function(id){gl.activeTexture(gl.TEXTURE0+id);gl.bindTexture(gl.TEXTURE_2D,tex);return id;}};
+}
+function createDoubleFBO(w,h,internalFormat,format,type,param){
+  var fbo1=createFBO(w,h,internalFormat,format,type,param);
+  var fbo2=createFBO(w,h,internalFormat,format,type,param);
+  return{width:w,height:h,texelSizeX:fbo1.texelSizeX,texelSizeY:fbo1.texelSizeY,
+    get read(){return fbo1;},set read(v){fbo1=v;},
+    get write(){return fbo2;},set write(v){fbo2=v;},
+    swap:function(){var t=fbo1;fbo1=fbo2;fbo2=t;}};
+}
+function resizeFBO(target,w,h,internalFormat,format,type,param){
+  var n=createFBO(w,h,internalFormat,format,type,param);
+  copyProgram.bind();gl.uniform1i(copyProgram.uniforms.uTexture,target.attach(0));blit(n);return n;
+}
+function resizeDoubleFBO(target,w,h,internalFormat,format,type,param){
+  if(target.width===w&&target.height===h) return target;
+  target.read=resizeFBO(target.read,w,h,internalFormat,format,type,param);
+  target.write=createFBO(w,h,internalFormat,format,type,param);
+  target.width=w;target.height=h;target.texelSizeX=1./w;target.texelSizeY=1./h;
+  return target;
+}
+
+/* Dithering texture */
+function createDitheringTexture(){
+  var size=8,data=new Uint8Array(size*size*3);
+  var bayer=[0,32,8,40,2,34,10,42,48,16,56,24,50,18,58,26,12,44,4,36,14,46,6,38,60,28,52,20,62,30,54,22,3,35,11,43,1,33,9,41,51,19,59,27,49,17,57,25,15,47,7,39,13,45,5,37,63,31,55,23,61,29,53,21];
+  for(var i=0;i<64;i++){var v=Math.round((bayer[i]/63)*255);data[i*3]=data[i*3+1]=data[i*3+2]=v;}
+  var tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,size,size,0,gl.RGB,gl.UNSIGNED_BYTE,data);
+  return{texture:tex,width:size,height:size,attach:function(id){gl.activeTexture(gl.TEXTURE0+id);gl.bindTexture(gl.TEXTURE_2D,tex);return id;}};
+}
+
+/* Programs */
+var blurProgram           =new Program(blurVertexShader,blurShader);
+var copyProgram           =new Program(baseVertexShader,copyShader);
+var clearProgram          =new Program(baseVertexShader,clearShader);
+var colorProgram          =new Program(baseVertexShader,colorShader);
+var bloomPrefilterProgram =new Program(baseVertexShader,bloomPrefilterShader);
+var bloomBlurProgram      =new Program(baseVertexShader,bloomBlurShader);
+var bloomFinalProgram     =new Program(baseVertexShader,bloomFinalShader);
+var sunraysMaskProgram    =new Program(baseVertexShader,sunraysMaskShader);
+var sunraysProgram        =new Program(baseVertexShader,sunraysShader);
+var splatProgram          =new Program(baseVertexShader,splatShader);
+var advectionProgram      =new Program(baseVertexShader,advectionShader);
+var divergenceProgram     =new Program(baseVertexShader,divergenceShader);
+var curlProgram           =new Program(baseVertexShader,curlShader);
+var vorticityProgram      =new Program(baseVertexShader,vorticityShader);
+var pressureProgram       =new Program(baseVertexShader,pressureShader);
+var gradienSubtractProgram=new Program(baseVertexShader,gradientSubtractShader);
+var displayMaterial       =new Material(baseVertexShader,displayShaderSource);
+
+/* Framebuffers */
+var dye,velocity,divergence2,curl2,pressure2;
+var bloom,bloomFramebuffers=[];
+var sunrays2,sunraysTemp;
+var ditheringTexture=createDitheringTexture();
+
+function getResolution(resolution){
+  var ar=gl.drawingBufferWidth/gl.drawingBufferHeight;
+  if(ar<1) ar=1./ar;
+  var min=Math.round(resolution),max=Math.round(resolution*ar);
+  return gl.drawingBufferWidth>gl.drawingBufferHeight?{width:max,height:min}:{width:min,height:max};
+}
+function initFramebuffers(){
+  var simRes=getResolution(config.SIM_RESOLUTION),dyeRes=getResolution(config.DYE_RESOLUTION);
+  var texType=ext.halfFloatTexType,rgba=ext.formatRGBA,rg=ext.formatRG,r=ext.formatR;
+  var filtering=ext.supportLinearFiltering?gl.LINEAR:gl.NEAREST;
+  gl.disable(gl.BLEND);
+  if(!dye) dye=createDoubleFBO(dyeRes.width,dyeRes.height,rgba.internalFormat,rgba.format,texType,filtering);
+  else     dye=resizeDoubleFBO(dye,dyeRes.width,dyeRes.height,rgba.internalFormat,rgba.format,texType,filtering);
+  if(!velocity) velocity=createDoubleFBO(simRes.width,simRes.height,rg.internalFormat,rg.format,texType,filtering);
+  else          velocity=resizeDoubleFBO(velocity,simRes.width,simRes.height,rg.internalFormat,rg.format,texType,filtering);
+  if(!divergence2) divergence2=createFBO(simRes.width,simRes.height,r.internalFormat,r.format,texType,gl.NEAREST);
+  if(!curl2)       curl2=createFBO(simRes.width,simRes.height,r.internalFormat,r.format,texType,gl.NEAREST);
+  if(!pressure2)   pressure2=createDoubleFBO(simRes.width,simRes.height,r.internalFormat,r.format,texType,gl.NEAREST);
+  else             pressure2=resizeDoubleFBO(pressure2,simRes.width,simRes.height,r.internalFormat,r.format,texType,gl.NEAREST);
+  initBloomFramebuffers();initSunraysFramebuffers();
+}
+function initBloomFramebuffers(){
+  var res=getResolution(config.BLOOM_RESOLUTION);
+  var texType=ext.halfFloatTexType,rgba=ext.formatRGBA,filtering=ext.supportLinearFiltering?gl.LINEAR:gl.NEAREST;
+  bloom=createFBO(res.width,res.height,rgba.internalFormat,rgba.format,texType,filtering);
+  bloomFramebuffers.length=0;
+  for(var i=0;i<config.BLOOM_ITERATIONS;i++){
+    var w=res.width>>(i+1),h=res.height>>(i+1);
+    if(w<2||h<2) break;
+    bloomFramebuffers.push(createFBO(w,h,rgba.internalFormat,rgba.format,texType,filtering));
+  }
+}
+function initSunraysFramebuffers(){
+  var res=getResolution(config.SUNRAYS_RESOLUTION);
+  var texType=ext.halfFloatTexType,r=ext.formatR,filtering=ext.supportLinearFiltering?gl.LINEAR:gl.NEAREST;
+  sunrays2=createFBO(res.width,res.height,r.internalFormat,r.format,texType,filtering);
+  sunraysTemp=createFBO(res.width,res.height,r.internalFormat,r.format,texType,filtering);
+}
+function updateKeywords(){
+  var kw=[];
+  if(config.SHADING) kw.push('SHADING');
+  if(config.BLOOM)   kw.push('BLOOM');
+  if(config.SUNRAYS) kw.push('SUNRAYS');
+  displayMaterial.setKeywords(kw);
+}
+updateKeywords();
+initFramebuffers();
+
+/* Gold color generator — hue locked to 38–52° (gold/amber range) */
+function generateColor(){
+  // Brand gold #f3d728 (243,215,40), dimmed for subtle emission
+  var I=0.05+Math.random()*0.015;
+  return {r:0.9529*I, g:0.8431*I, b:0.1569*I};
+}
+function HSVtoRGB(h,s,v){
+  var r,g,b,i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
+  switch(i%6){
+    case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;
+    case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;case 5:r=v;g=p;b=q;break;
+  }
+  return{r:r,g:g,b:b};
+}
+function normalizeColor(c){return{r:c.r/255,g:c.g/255,b:c.b/255};}
+function wrap(v,min,max){var r=max-min;if(!r) return min;return(v-min)%r+min;}
+function getTextureScale(tex,w,h){return{x:w/tex.width,y:h/tex.height};}
+function scaleByPixelRatio(v){return Math.floor(v*(window.devicePixelRatio||1));}
+
+/* Input — listen on window so pointer-events:none canvas still works */
+window.addEventListener('mousemove',function(e){
+  var p=pointers[0];
+  var posX=scaleByPixelRatio(e.clientX);
+  var posY=scaleByPixelRatio(e.clientY);
+  if(!p._init){
+    p._init=true;
+    updatePointerDownData(p,-1,posX,posY);
+  }
+  updatePointerMoveData(p,posX,posY);
+},{passive:true});
+
+window.addEventListener('touchstart',function(e){
+  var touches=e.targetTouches;
+  while(touches.length>=pointers.length) pointers.push(new pointerPrototype());
+  for(var i=0;i<touches.length;i++){
+    var posX=scaleByPixelRatio(touches[i].pageX);
+    var posY=scaleByPixelRatio(touches[i].pageY);
+    updatePointerDownData(pointers[i+1],touches[i].identifier,posX,posY);
+  }
+},{passive:true});
+window.addEventListener('touchmove',function(e){
+  var touches=e.targetTouches;
+  for(var i=0;i<touches.length;i++){
+    var p=pointers[i+1];if(!p||!p.down) continue;
+    var posX=scaleByPixelRatio(touches[i].pageX);
+    var posY=scaleByPixelRatio(touches[i].pageY);
+    updatePointerMoveData(p,posX,posY);
+  }
+},{passive:true});
+window.addEventListener('touchend',function(e){
+  var touches=e.changedTouches;
+  for(var i=0;i<touches.length;i++){
+    var p=pointers.find(function(x){return x.id===touches[i].identifier;});
+    if(p) updatePointerUpData(p);
+  }
+});
+
+function updatePointerDownData(p,id,posX,posY){
+  p.id=id;p.down=true;p.moved=false;
+  p.texcoordX=posX/canvas.width;p.texcoordY=1.-posY/canvas.height;
+  p.prevTexcoordX=p.texcoordX;p.prevTexcoordY=p.texcoordY;
+  p.deltaX=0;p.deltaY=0;p.color=generateColor();
+}
+function updatePointerMoveData(p,posX,posY){
+  p.prevTexcoordX=p.texcoordX;p.prevTexcoordY=p.texcoordY;
+  p.texcoordX=posX/canvas.width;p.texcoordY=1.-posY/canvas.height;
+  p.deltaX=correctDeltaX(p.texcoordX-p.prevTexcoordX);
+  p.deltaY=correctDeltaY(p.texcoordY-p.prevTexcoordY);
+  p.moved=Math.abs(p.deltaX)>0||Math.abs(p.deltaY)>0;
+}
+function updatePointerUpData(p){p.down=false;}
+function correctDeltaX(d){var ar=canvas.width/canvas.height;if(ar<1) d*=ar;return d;}
+function correctDeltaY(d){var ar=canvas.width/canvas.height;if(ar>1) d/=ar;return d;}
+
+/* Splat helpers */
+function splatPointer(p){
+  var dx=p.deltaX*config.SPLAT_FORCE,dy=p.deltaY*config.SPLAT_FORCE;
+  splat(p.texcoordX,p.texcoordY,dx,dy,p.color);
+}
+function multipleSplats(amount){
+  for(var i=0;i<amount;i++){
+    var color=generateColor();color.r*=3;color.g*=3;color.b*=3;
+    splat(Math.random(),Math.random(),1000*(Math.random()-.5),1000*(Math.random()-.5),color);
+  }
+}
+function splat(x,y,dx,dy,color){
+  splatProgram.bind();
+  gl.uniform1i(splatProgram.uniforms.uTarget,velocity.read.attach(0));
+  gl.uniform1f(splatProgram.uniforms.aspectRatio,canvas.width/canvas.height);
+  gl.uniform2f(splatProgram.uniforms.point,x,y);
+  gl.uniform3f(splatProgram.uniforms.color,dx,dy,0);
+  gl.uniform1f(splatProgram.uniforms.radius,correctRadius(config.SPLAT_RADIUS/100));
+  blit(velocity.write);velocity.swap();
+  gl.uniform1i(splatProgram.uniforms.uTarget,dye.read.attach(0));
+  gl.uniform3f(splatProgram.uniforms.color,color.r,color.g,color.b);
+  blit(dye.write);dye.swap();
+}
+function correctRadius(r){var ar=canvas.width/canvas.height;if(ar>1) r*=ar;return r;}
+
+/* Main loop */
+var lastUpdateTime=Date.now(),colorUpdateTimer=0;
+update();
+
+function update(){
+  var dt=calcDeltaTime();
+  if(resizeCanvas()) initFramebuffers();
+  applyInputs();
+  if(!config.PAUSED) step(dt);
+  render(null);
+  requestAnimationFrame(update);
+}
+function calcDeltaTime(){var now=Date.now(),dt=Math.min((now-lastUpdateTime)/1000,.016666);lastUpdateTime=now;return dt;}
+function resizeCanvas(){
+  var w=Math.round(canvas.clientWidth*(window.devicePixelRatio||1));
+  var h=Math.round(canvas.clientHeight*(window.devicePixelRatio||1));
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;return true;}
+  return false;
+}
+function applyInputs(){
+  if(splatStack.length>0) multipleSplats(splatStack.pop());
+  pointers.forEach(function(p){if(p.moved){p.moved=false;splatPointer(p);}});
+}
+
+/* Navier-Stokes solver */
+function step(dt){
+  gl.disable(gl.BLEND);
+  curlProgram.bind();
+  gl.uniform2f(curlProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  gl.uniform1i(curlProgram.uniforms.uVelocity,velocity.read.attach(0));
+  blit(curl2);
+  vorticityProgram.bind();
+  gl.uniform2f(vorticityProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  gl.uniform1i(vorticityProgram.uniforms.uVelocity,velocity.read.attach(0));
+  gl.uniform1i(vorticityProgram.uniforms.uCurl,curl2.attach(1));
+  gl.uniform1f(vorticityProgram.uniforms.curl,config.CURL);
+  gl.uniform1f(vorticityProgram.uniforms.dt,dt);
+  blit(velocity.write);velocity.swap();
+  divergenceProgram.bind();
+  gl.uniform2f(divergenceProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  gl.uniform1i(divergenceProgram.uniforms.uVelocity,velocity.read.attach(0));
+  blit(divergence2);
+  clearProgram.bind();
+  gl.uniform1i(clearProgram.uniforms.uTexture,pressure2.read.attach(0));
+  gl.uniform1f(clearProgram.uniforms.value,config.PRESSURE);
+  blit(pressure2.write);pressure2.swap();
+  pressureProgram.bind();
+  gl.uniform2f(pressureProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  gl.uniform1i(pressureProgram.uniforms.uDivergence,divergence2.attach(0));
+  for(var i=0;i<config.PRESSURE_ITERATIONS;i++){
+    gl.uniform1i(pressureProgram.uniforms.uPressure,pressure2.read.attach(1));
+    blit(pressure2.write);pressure2.swap();
+  }
+  gradienSubtractProgram.bind();
+  gl.uniform2f(gradienSubtractProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  gl.uniform1i(gradienSubtractProgram.uniforms.uPressure,pressure2.read.attach(0));
+  gl.uniform1i(gradienSubtractProgram.uniforms.uVelocity,velocity.read.attach(1));
+  blit(velocity.write);velocity.swap();
+  advectionProgram.bind();
+  gl.uniform2f(advectionProgram.uniforms.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+  if(!ext.supportLinearFiltering) gl.uniform2f(advectionProgram.uniforms.dyeTexelSize,velocity.texelSizeX,velocity.texelSizeY);
+  var vId=velocity.read.attach(0);
+  gl.uniform1i(advectionProgram.uniforms.uVelocity,vId);
+  gl.uniform1i(advectionProgram.uniforms.uSource,vId);
+  gl.uniform1f(advectionProgram.uniforms.dt,dt);
+  gl.uniform1f(advectionProgram.uniforms.dissipation,config.VELOCITY_DISSIPATION);
+  blit(velocity.write);velocity.swap();
+  if(!ext.supportLinearFiltering) gl.uniform2f(advectionProgram.uniforms.dyeTexelSize,dye.texelSizeX,dye.texelSizeY);
+  gl.uniform1i(advectionProgram.uniforms.uVelocity,velocity.read.attach(0));
+  gl.uniform1i(advectionProgram.uniforms.uSource,dye.read.attach(1));
+  gl.uniform1f(advectionProgram.uniforms.dissipation,config.DENSITY_DISSIPATION);
+  blit(dye.write);dye.swap();
+}
+
+/* Render */
+function render(target){
+  if(config.BLOOM)   applyBloom(dye.read,bloom);
+  if(config.SUNRAYS){applySunrays(dye.read,dye.write,sunrays2);blur(sunrays2,sunraysTemp,1);}
+  if(target==null||!config.TRANSPARENT){gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.BLEND);}
+  else gl.disable(gl.BLEND);
+  if(!config.TRANSPARENT) drawColor(target,normalizeColor(config.BACK_COLOR));
+  drawDisplay(target);
+}
+function drawColor(target,color){
+  colorProgram.bind();gl.uniform4f(colorProgram.uniforms.color,color.r,color.g,color.b,1);blit(target);
+}
+function drawDisplay(target){
+  var w=target==null?gl.drawingBufferWidth:target.width;
+  var h=target==null?gl.drawingBufferHeight:target.height;
+  displayMaterial.bind();
+  if(config.SHADING) gl.uniform2f(displayMaterial.uniforms.texelSize,1./w,1./h);
+  gl.uniform1i(displayMaterial.uniforms.uTexture,dye.read.attach(0));
+  gl.uniform1i(displayMaterial.uniforms.uVelocity,velocity.read.attach(4));
+  gl.uniform1f(displayMaterial.uniforms.distortionAmount,.35);
+  if(config.BLOOM){
+    gl.uniform1i(displayMaterial.uniforms.uBloom,bloom.attach(1));
+    gl.uniform1i(displayMaterial.uniforms.uDithering,ditheringTexture.attach(2));
+    var scale=getTextureScale(ditheringTexture,w,h);
+    gl.uniform2f(displayMaterial.uniforms.ditherScale,scale.x,scale.y);
+  }
+  if(config.SUNRAYS) gl.uniform1i(displayMaterial.uniforms.uSunrays,sunrays2.attach(3));
+  blit(target);
+}
+function applyBloom(source,destination){
+  if(bloomFramebuffers.length<2) return;
+  var last=destination;
+  gl.disable(gl.BLEND);
+  bloomPrefilterProgram.bind();
+  var knee=config.BLOOM_THRESHOLD*config.BLOOM_SOFT_KNEE+.0001;
+  gl.uniform3f(bloomPrefilterProgram.uniforms.curve,config.BLOOM_THRESHOLD-knee,knee*2,.25/knee);
+  gl.uniform1f(bloomPrefilterProgram.uniforms.threshold,config.BLOOM_THRESHOLD);
+  gl.uniform1i(bloomPrefilterProgram.uniforms.uTexture,source.attach(0));
+  blit(last);
+  bloomBlurProgram.bind();
+  for(var i=0;i<bloomFramebuffers.length;i++){
+    var dest=bloomFramebuffers[i];
+    gl.uniform2f(bloomBlurProgram.uniforms.texelSize,last.texelSizeX,last.texelSizeY);
+    gl.uniform1i(bloomBlurProgram.uniforms.uTexture,last.attach(0));
+    blit(dest);last=dest;
+  }
+  gl.blendFunc(gl.ONE,gl.ONE);gl.enable(gl.BLEND);
+  for(var j=bloomFramebuffers.length-2;j>=0;j--){
+    var base=bloomFramebuffers[j];
+    gl.uniform2f(bloomBlurProgram.uniforms.texelSize,last.texelSizeX,last.texelSizeY);
+    gl.uniform1i(bloomBlurProgram.uniforms.uTexture,last.attach(0));
+    gl.viewport(0,0,base.width,base.height);blit(base);last=base;
+  }
+  gl.disable(gl.BLEND);
+  bloomFinalProgram.bind();
+  gl.uniform2f(bloomFinalProgram.uniforms.texelSize,last.texelSizeX,last.texelSizeY);
+  gl.uniform1i(bloomFinalProgram.uniforms.uTexture,last.attach(0));
+  gl.uniform1f(bloomFinalProgram.uniforms.intensity,config.BLOOM_INTENSITY);
+  blit(destination);
+}
+function applySunrays(source,mask,destination){
+  gl.disable(gl.BLEND);
+  sunraysMaskProgram.bind();gl.uniform1i(sunraysMaskProgram.uniforms.uTexture,source.attach(0));blit(mask);
+  sunraysProgram.bind();
+  gl.uniform1f(sunraysProgram.uniforms.weight,config.SUNRAYS_WEIGHT);
+  gl.uniform1i(sunraysProgram.uniforms.uTexture,mask.attach(0));blit(destination);
+}
+function blur(target,temp,iterations){
+  blurProgram.bind();
+  for(var i=0;i<iterations;i++){
+    gl.uniform2f(blurProgram.uniforms.texelSize,target.texelSizeX,0);
+    gl.uniform1i(blurProgram.uniforms.uTexture,target.attach(0));blit(temp);
+    gl.uniform2f(blurProgram.uniforms.texelSize,0,target.texelSizeY);
+    gl.uniform1i(blurProgram.uniforms.uTexture,temp.attach(0));blit(target);
+  }
+}
+
+})();
+</script>
+
+</body>
+</html>
