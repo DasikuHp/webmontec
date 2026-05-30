@@ -1,0 +1,29 @@
+# robots.txt — moncatec.es
+# Permitir indexación general
+User-agent: *
+Allow: /
+
+# Crawlers de IA / búsqueda generativa — permitidos explícitamente
+# (para poder aparecer y ser citados en ChatGPT, Perplexity y los AI Overviews de Google)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://www.moncatec.es/sitemap.xml
